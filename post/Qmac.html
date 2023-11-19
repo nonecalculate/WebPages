@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Blog - Post Title</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            height: 100%;
+            /* body를 화면 높이의 100%로 설정 */
+            overflow-y: auto;
+        }
+
+        main audio {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        #video-background {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            opacity: 0.5;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+
+        .dark-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+
+        main {
+            position: relative;
+            flex: 1;
+            max-width: 2300px;
+            max-height: 100%;
+            /* 최대 높이 설정 */
+            margin: 20px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            /* 반투명한 흰색 배경 */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            /* 세로 스크롤이 필요한 경우에만 나타나도록 설정 */
+        }
+
+        .post {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+        }
+
+        .post h2 {
+            color: #333;
+            text-decoration: underline;
+        }
+
+        .post p {
+            color: #666;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .post p {
+            font-size: 15px;
+            line-height: 1.2;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        nav {
+            width: 0;
+            height: 100vh;
+            overflow: hidden;
+            transition: width 0.3s;
+            background-color: #333;
+            color: #fff;
+            position: fixed;
+            top: 0;
+            right: 0;
+        }
+
+        pre {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+
+        nav a {
+            display: block;
+            padding: 1em;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            position: fixed;
+            top: 1em;
+            right: 1em;
+            z-index: 2;
+            background-color: #333;
+            color: #fff;
+            padding: 0.5em;
+            border: none;
+            outline: none;
+        }
+
+        #icon-container {
+            position: fixed;
+
+            bottom: 20px;
+
+            right: 20px;
+
+            display: flex;
+
+            flex-direction: row;
+            align-items: center;
+
+        }
+
+        .icon {
+            width: 60px;
+            height: 60px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <video id="video-background" autoplay loop muted>
+        <source src="../gif/snail_-_3012 (1080p).mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="dark-overlay"></div>
+
+    <header>
+        <h1>김종선 간이블로그</h1>
+        <button class="menu-toggle" onclick="toggleNav()">☰</button>
+    </header>
+
+    <nav id="navbar">
+        <a href="../index.html">Home</a>
+        <a href="../about.html">About</a>
+        <a href="../Contact.html">Contact</a>
+    </nav>
+
+    <main>
+        <div class="post">
+            <h2>게임서버 클라이언트</h2>
+            <div class="tooltip">
+                <p class="tooltiptext">This is the content of the first blog post.</p>
+                <pre>
+            #include <stdio.h>
+                #include <stdlib.h>
+                #include <conio.h>
+                #include <Windows.h>
+                #define MAXSIZE 16 //최대입력한 수 2^4 = 16
+                
+                typedef struct NODE
+                {
+                    int group[16];
+                    int bit[4];
+                    struct NODE* next;
+                }NODE;
+                
+                int X_table[16] = { NULL }; // 테이블 선택 배열
+                int group[16] = { 0 }; //EPI 테이블 그룹
+                int **EPI_table; //EPI 회로도
+                int E_table_h = 0; //회로도 높이
+                
+                void Print(NODE* head); //기본 column 출력
+                void Print_Ct(NODE* PI, int **arr, int result); //PI회도로 출력
+                void Set(NODE* main_table); // 기본 테이블 세팅
+                void Choice(); //0~15까지 비트 선택 함수
+                void Reclass(NODE* column); //재분류 함수
+                void Merge(NODE* column_1, NODE* column_2); // 합치기
+                void Delite_overlap(NODE* head); //중복제거
+                void PI_correct(NODE* column_one, NODE* column_two, NODE* PI); //PI 추출
+                void Circuit_type(NODE* PI); //회로식
+                void EPI_correct(); //최종 EPI
+                void Print_Fx(NODE* PI); //함수식 도출
+                void Free(NODE* node); //동적할당노드 해제용
+                void Free_table(); //동적할당 EPI테이블 해제용
+                int Check_bit(int bit[]); //1비트 확인용
+                
+                void main()
+                {
+                    NODE* main_table = (NODE*)malloc(sizeof(NODE));
+                    NODE* x_table = (NODE*)malloc(sizeof(NODE));
+                    NODE* column_1 = (NODE*)malloc(sizeof(NODE));
+                    NODE* column_2 = (NODE*)malloc(sizeof(NODE));
+                    NODE* column_3 = (NODE*)malloc(sizeof(NODE));
+                    NODE* column_4 = (NODE*)malloc(sizeof(NODE));
+                    NODE* PI = (NODE*)malloc(sizeof(NODE));
+                    main_table->next = NULL;
+                    x_table->next = NULL;
+                    column_1->next = NULL;
+                    column_2->next = NULL;
+                    column_3->next = NULL;
+                    column_4->next = NULL;
+                    PI->next = NULL;
+                    int r = 1;
+                    int page = -1;//단계 구별용 변수
+                    int result;
+                    int order;
+                      
+                
+                    while (r)
+                    {
+                        printf("1.Forword 2.Backword : ");
+                        scanf("%d", &order);
+                        if (order == 1 && page < 9) page++;
+                        else if (order == 2 && page > -1) page--;
+                
+                        if (page == 0) //초기 선택화면 X_table 세팅
+                        {
+                            Print(main_table);
+                            Choice();
+                            Reclass(x_table);
+                            Print(x_table);
+                        }
+                        else if (page == 1) //1차분류
+                        {
+                            Free(column_1);
+                            Merge(x_table, column_1);
+                            Print(column_1);
+                            result = 1;
+                        }
+                        else if (page == 2 && column_1->next != NULL)//2차분류
+                        {
+                            Free(column_2);
+                            Merge(column_1, column_2);
+                            if (column_2->next != NULL) //Merge 결과물이 없을때
+                            {
+                                Delite_overlap(column_2);
+                                Print(column_2);
+                                result = 2;
+                            }
+                            else
+                            {
+                                if (order == 1) page++;
+                                else page--;
+                            }
+                        }
+                        else if (page == 3 && column_2->next != NULL)//3차분류
+                        {
+                            Free(column_3);
+                            Merge(column_2, column_3);
+                            if (column_3->next != NULL)
+                            {
+                                Delite_overlap(column_3);
+                                Print(column_3);
+                                result = 3;
+                            }
+                            else
+                            {
+                                if (order == 1) page++;
+                                else page--;
+                            }
+                        }
+                        else if (page == 4 && column_3->next != NULL) //4차분류
+                        {
+                            Free(column_4);
+                            Merge(column_3, column_4);
+                            if (column_4->next != NULL)
+                            {
+                                Delite_overlap(column_4);
+                                Print(column_4);
+                                result = 4;
+                            }
+                            else
+                            {
+                                if (order == 1) page++;
+                                else page--;
+                            }
+                        }
+                        else if (page == 5) //PI추출
+                        {
+                            Free(PI);
+                            if (result == 1) PI_correct(column_1, column_1, PI);
+                            else if (result == 2) PI_correct(column_1, column_2, PI);
+                            else if (result == 3) PI_correct(column_2, column_3, PI);
+                            else PI_correct(column_3, column_4, PI);
+                
+                            Print(PI);
+                        }
+                        else if (page == 6)//EPI회로도 전개
+                        {
+                            delete[]EPI_table;
+                            Circuit_type(PI);
+                            Print_Ct(PI, EPI_table, result);
+                        }
+                        else if (page == 7) //EPI 추출
+                        {
+                            EPI_correct();
+                            Print_Ct(PI, EPI_table, result);
+                        }
+                        else if (page == 8) //최종함수 출력
+                        {
+                            Print_Fx(PI);
+                        }
+                        else if (page == 9)
+                        {
+                            printf("프로그램을 종료합니다.\n");
+                            r = 0;
+                        }
+                    }
+                }
+                
+                void Print(NODE* head)
+                {
+                    NODE* s = head->next;
+                
+                    system("cls");
+                    while (s != NULL)
+                    {
+                        printf("(");
+                        for (int i = 0; i < MAXSIZE; i++) //group 출력
+                        {
+                            if (s->group[i] != -1) printf("%2d,", s->group[i]);
+                        }
+                        printf(") ");
+                        for (int i = 0; i < 4; i++) //bit 출력
+                        {
+                            if (s->bit[i] != -1) printf("%2d", s->bit[i]);
+                            else printf(" -");
+                        }
+                        printf("\n");
+                        s = s->next;
+                    }
+                    printf("끝\n");
+                }
+                
+                void Print_Ct(NODE* PI, int **arr, int result) //PI회도로 출력
+                {
+                    NODE* s = PI->next;
+                    int j = 0;
+                    int max;
+                    if (result == 1) max = 2;
+                    else if (result == 2) max = 4;
+                    else if (result == 3) max = 8;
+                    else max = 16;
+                
+                    system("cls");
+                
+                    while (s != NULL)
+                    {
+                        printf("(");
+                        for (int i = 0; i < max; i++) //group 출력
+                        {
+                            if (s->group[i] != -1) printf("%2d,", s->group[i]);
+                            else printf("  ,");
+                        }
+                        printf(") ");
+                
+                        for (int i = 0; i < MAXSIZE; i++)
+                        {
+                            if (arr[j][i] == 1 || arr[j][i] == 2) printf(" x,");
+                            else printf("  ,");
+                        }
+                        printf("\n");
+                        j++;
+                        s = s->next;
+                    }
+                }
+                
+                void Set(NODE* main_table)   //cnt를 15까지 증가시키고 연결리스트에 입력
+                {
+                    NODE* p = main_table;
+                    NODE* s = p->next;
+                    int temp;
+                
+                    for (int i = 0; i < MAXSIZE; i++)
+                    {
+                        NODE* newdata = (NODE*)malloc(sizeof(NODE));
+                        newdata->group[0] = i; //그룹넘버 입력
+                
+                        for (int j = 1; j < MAXSIZE; j++)
+                        {
+                            newdata->group[j] = -1;
+                        }
+                        temp = i;
+                        for (int j = 3; j >= 0; j--)
+                        {
+                            newdata->bit[j] = temp % 2; //2진수로 입력
+                            temp /= 2;
+                        }
+                        newdata->next = s;  //노드연결
+                        p->next = newdata;
+                
+                        p = newdata;    //노드이동
+                    }
+                }
+                
+                void Choice()    //1번
+                {
+                    int num; // 입력수
+                
+                    printf("0~15까지 고르세요.\n");
+                    for (int i = 0; i < MAXSIZE; i++)
+                    {
+                        scanf("%d", &num);       //선택은 1 비선택은 0
+                        if (num == 0 || num == 1) X_table[i] = num;
+                        else i--;
+                    }
+                }
+                
+                void Reclass(NODE* column)
+                {
+                    NODE* p = column;
+                    NODE* s = p->next;
+                    int temp;
+                
+                    for (int i = 0; i < MAXSIZE; i++)
+                    {
+                        if (X_table[i] == 1)
+                        {
+                            NODE* newdata = (NODE*)malloc(sizeof(NODE));
+                            newdata->group[0] = i; //그룹넘버 입력
+                
+                            for (int j = 1; j < MAXSIZE; j++)
+                            {
+                                newdata->group[j] = -1;
+                            }
+                            temp = i;
+                            for (int j = 3; j >= 0; j--)
+                            {
+                                newdata->bit[j] = temp % 2; //2진수로 입력
+                                temp /= 2;
+                            }
+                
+                            while (s != NULL && Check_bit(newdata->bit) >= Check_bit(s->bit))
+                            {
+                                p = p->next;
+                                s = p->next;
+                            }
+                            newdata->next = s; //노드연결
+                            p->next = newdata;
+                            p = column;  //p,s노드위치 초기화
+                            s = p->next;
+                        }
+                    }
+                }
+                
+                void Merge(NODE* column_1, NODE* column_2) // 4개의 비트를 비교, 같은 위치에 다른값이 1개만 있어야 합침
+                {
+                    NODE* p = column_1->next;
+                    NODE* s = p->next;
+                    NODE* p_2 = column_2;
+                    NODE* s_2 = p_2->next;
+                    int cnt = 0;
+                    int term = 0;
+                
+                
+                    while (p->next != NULL) //p루트
+                    {
+                        while (s != NULL && Check_bit(p->bit) - Check_bit(s->bit) >= -1) //s루트
+                        {
+                            for (int i = 0; i < 4; i++) //저장된 정보를 비교하여 다른비트의 갯수를 카운팅
+                            {
+                                if (p->bit[i] - s->bit[i] != 0) cnt++;
+                            }
+                
+                            if (cnt == 1) //차이가 1밖에 안날때
+                            {
+                                NODE* newdata = (NODE*)malloc(sizeof(NODE));
+                
+                                for (int i = 0; i < 4; i++) //newdata에 비트 입력
+                                {
+                                    if (p->bit[i] == s->bit[i]) newdata->bit[i] = s->bit[i];
+                                    else newdata->bit[i] = -1;
+                                }
+                
+                                for (int i = 0; i < 8; i++) //p그룹num 입력
+                                {
+                                    if (p->group[i] != -1)
+                                    {
+                                        newdata->group[i] = p->group[i];
+                                        term = i;
+                                    }
+                                    else
+                                    {
+                                        term = i;
+                                        i = 8;
+                                    }
+                                }
+                                for (int i = 0; term + i < MAXSIZE; i++) //s그룹num 입력
+                                {
+                                    if (s->group[i] != -1) newdata->group[term + i] = s->group[i];
+                                    else newdata->group[term + i] = -1;
+                                }
+                
+                                newdata->next = s_2; //newdata 노드연결
+                                p_2->next = newdata;
+                                p_2 = newdata;
+                            }
+                            s = s->next; //s루트 이동
+                            cnt = 0;
+                        }
+                        p = p->next; //p루트 이동
+                        s = p->next;
+                    }
+                }
+                
+                void Delite_overlap(NODE* head)
+                {
+                    NODE* temp = head->next;
+                    NODE* p = head->next;
+                    NODE* s = p->next;
+                    int cnt = 0;
+                
+                    while (p != NULL) //p루트
+                    {
+                        while (s != NULL && Check_bit(p->bit) - Check_bit(s->bit) == 0) //s루트
+                        {
+                            for (int i = 0; i < 4; i++) //저장된 정보를 비교하여 정보가 완전히 중복되는지 카운팅
+                            {
+                                if (p->bit[i] == s->bit[i]) cnt++;
+                            }
+                
+                            if (cnt == 4) //4개의 비트가 전부 중복될시 중복된노드를 삭제한다.
+                            {
+                                temp->next = s->next;
+                                free(s);
+                                s = temp->next;
+                            }
+                            else
+                            {
+                                temp = temp->next; //temp 이동
+                                if (temp != NULL) s = temp->next;
+                            }
+                            cnt = 0;
+                        }
+                        temp = p->next; //p루트 이동
+                        p = p->next;
+                        if (p != NULL) s = p->next;
+                    }
+                }
+                
+                void PI_correct(NODE* column_one, NODE* column_two, NODE* PI)
+                {
+                    NODE* s_o = column_one->next;
+                    NODE* s_t = column_two->next;
+                    NODE* p = PI;
+                    NODE* s = p->next;
+                    int i = 0;
+                    int j = 0;
+                    int cnt = 0;
+                
+                    while (s_o != NULL) //column마지막 전 단계
+                    {
+                        while (s_t != NULL)//column 마지막 단계
+                        {
+                            while (s_o->group[j] != -1 && j++ < MAXSIZE) //-1은 그룹정보가 없는 부분
+                            {
+                                while (s_t->group[i] != -1 && i++ < MAXSIZE)
+                                {
+                                    if (s_o->group[j - 1] == s_t->group[i - 1]) cnt++; //같은위치중복횟수카운트
+                                }
+                                i = 0;
+                            }
+                            if (j == cnt) s_t = NULL; //중복이였다면 s_t루트를 끝냄
+                
+                            if (s_t != NULL && s_t->next == NULL) //마지막까지 중복이 아니라면 복사
+                            {
+                                NODE* newdata = (NODE*)malloc(sizeof(NODE)); //노드생성
+                                for (i = 0; i < 16; i++)
+                                {
+                                    newdata->group[i] = s_o->group[i];
+                                }
+                                for (i = 0; i < 4; i++)
+                                {
+                                    newdata->bit[i] = s_o->bit[i];
+                                }
+                                newdata->next = s; //연결노드 이동
+                                p->next = newdata;
+                                p = p->next;
+                            }
+                            cnt = 0;
+                            j = 0;
+                            i = 0;
+                            if (s_t != NULL) s_t = s_t->next; //s_t가 NULL이 아닐때 이동
+                        }
+                        s_o = s_o->next;
+                        s_t = column_two->next;
+                    }
+                    s_t = column_two->next;
+                    while (s_t != NULL) //column 마지막 단계 연결
+                    {
+                        NODE* newdata = (NODE*)malloc(sizeof(NODE));
+                        for (int i = 0; i < 16; i++)
+                        {
+                            newdata->group[i] = s_t->group[i];
+                        }
+                        for (int i = 0; i < 4; i++)
+                        {
+                            newdata->bit[i] = s_t->bit[i];
+                        }
+                        newdata->next = s;
+                        p->next = newdata;
+                        p = p->next;
+                        s_t = s_t->next;
+                    }
+                }
+                
+                void Circuit_type(NODE* PI)
+                {
+                    NODE* s = PI->next;
+                    int cnt = 0;
+                    int i = 0;
+                    int j = 0;
+                
+                    while (s != NULL) //포함되어있는 그룹들 전부 1로 세트
+                    {
+                        while (s->group[i] != -1 && i++ < 16)
+                        {
+                            group[s->group[i - 1]] = 1;
+                        }
+                        E_table_h++;
+                        s = s->next;
+                    }
+                    EPI_table = new int*[E_table_h];    //EPI_table 동적할당
+                    for (i = 0; i < E_table_h; i++)
+                    {
+                        EPI_table[i] = new int[16];
+                    }
+                
+                    s = PI->next; //s위치 초기화
+                    while (s != NULL) //EPI_table에 그룹위치 각인
+                    {
+                        while (s->group[j] != -1 && j++ < MAXSIZE)
+                        {
+                            for (i = 0; i < MAXSIZE; i++)
+                            {
+                                if (s->group[j - 1] == i) EPI_table[cnt][i] = 1;
+                            }
+                        }
+                        cnt++;
+                        j = 0;
+                        s = s->next;
+                    }
+                }
+                
+                void EPI_correct()
+                {
+                    int cnt = 0;
+                
+                    for (int j = 0; j < MAXSIZE; j++) //EPI 추출
+                    {
+                        for (int i = 0; i < E_table_h; i++)
+                        {
+                            if (EPI_table[i][j] == 1) cnt++;
+                        }
+                
+                        if (cnt == 1)
+                        {
+                            for (int i = 0; i < E_table_h; i++)
+                            {
+                                if (EPI_table[i][j] == 1) EPI_table[i][j] = 2;
+                            }
+                        }
+                        cnt = 0;
+                    }
+                
+                    for (int j = 0; j < E_table_h; j++) //EPI에서 가로제거작업
+                    {
+                        for (int i = 0; i < MAXSIZE; i++)
+                        {
+                            if (EPI_table[j][i] == 2)
+                            {
+                                for (int k = 0; k < MAXSIZE; k++)
+                                {
+                                    if (EPI_table[j][k] == 1) EPI_table[j][k] = -1;
+                                }
+                            }
+                        }
+                    }
+                
+                    for (int j = 0; j < MAXSIZE; j++) //EPI 제거된 가로에서 세로제거
+                    {
+                        for (int i = 0; i < E_table_h; i++)
+                        {
+                            if (EPI_table[i][j] == -1)
+                            {
+                                for (int k = 0; k < E_table_h; k++)
+                                {
+                                    if (EPI_table[k][j] == 1) EPI_table[k][j] = -2;
+                                }
+                            }
+                        }
+                    }
+                    cnt = 0;
+                    for (int j = 0; j < E_table_h; j++) //제거에서 살아남은 EPI 추출
+                    {
+                        for (int i = 0; i < MAXSIZE; i++)
+                        {
+                            if (EPI_table[j][i] == -1 || EPI_table[j][i] == -2) cnt++;
+                        }
+                
+                        if (cnt == 0)
+                        {
+                            for (int i = 0; i < MAXSIZE; i++)
+                            {
+                                if (EPI_table[j][i] == 1) EPI_table[j][i] = 2;
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 0; i < MAXSIZE; i++)
+                            {
+                                if (EPI_table[j][i] == 1) EPI_table[j][i] = -2;
+                            }
+                            cnt = 0;
+                        }
+                    }
+                }
+                
+                void Print_Fx(NODE *PI)
+                {
+                    NODE* s = PI->next;
+                    int cnt = 0;
+                    int EPI = 0;
+                
+                    printf("F(x) = ");
+                    while (s != NULL)
+                    {
+                        for (int i = 0; i < MAXSIZE; i++)
+                        {
+                            if (EPI_table[cnt][i] == 2) EPI = 1;
+                        }
+                
+                        if (EPI == 1)
+                        {
+                            if (cnt != 0) printf(" + ");
+                
+                            for (int i = 0; i < 4; i++)
+                            {
+                                if (i == 0)
+                                {
+                                    if (s->bit[i] == 0) printf("A'");
+                                    else if (s->bit[i] == 1) printf("A");
+                                }
+                                else if (i == 1)
+                                {
+                                    if (s->bit[i] == 0) printf("B'");
+                                    else if (s->bit[i] == 1) printf("B");
+                                }
+                                else if (i == 2)
+                                {
+                                    if (s->bit[i] == 0) printf("C'");
+                                    else if (s->bit[i] == 1) printf("C");
+                                }
+                                else
+                                {
+                                    if (s->bit[i] == 0) printf("D'");
+                                    else if (s->bit[i] == 1) printf("D");
+                                }
+                            }
+                            EPI = 0;
+                        }
+                        s = s->next;
+                        cnt++;
+                    }
+                    printf("\n");
+                }
+                
+                void Free(NODE* node)
+                {
+                    NODE* p = node;
+                    NODE* s = p->next;
+                
+                    while (s != NULL)
+                    {
+                        p->next = s->next;
+                        free(s);
+                        s = p->next;
+                    }
+                }
+                
+                int Check_bit(int bit[]) //저장된 데이터에서 1의갯수를 카운팅하여 반환
+                {
+                    int cnt = 0;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (bit[i] == 1) cnt++;
+                    }
+                    return cnt;
+                }
+        </pre>
+            </div>
+        </div>
+        <div id="icon-container">
+            <!-- Example icons (replace with your own icons and links) -->
+            <img class="icon" src="../Icon/YT.png" alt="Icon 1" onclick="openLink('https://www.youtube.com/')">
+            <img class="icon" src="../Icon/GIT.png" alt="Icon 2"
+                onclick="openLink('https://github.com/nonecalculate/Anyproject.git')">
+            <img class="icon" src="../Icon/steam2.png" alt="Icon 3"
+                onclick="openLink('https://steamcommunity.com/id/whdtjs_92/')">
+        </div>
+    </main>
+
+    <script>
+        function toggleNav() {
+            const nav = document.getElementById('navbar');
+            nav.style.width = nav.style.width === '250px' ? '0' : '250px';
+        }
+        function openLink(url) {
+            window.open(url, '_blank');
+        }
+        const menuToggle = document.querySelector('.menu-toggle');
+        menuToggle.style.display = 'block'; // Display the toggle button once JavaScript is loaded
+    </script>
+</body>
+
+</html>

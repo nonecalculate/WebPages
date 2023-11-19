@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Blog - Post Title</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      height: 100%;
+      /* body를 화면 높이의 100%로 설정 */
+      overflow-y: auto;
+    }
+
+    main audio {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    #video-background {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      opacity: 0.5;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: -1;
+    }
+
+    .dark-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: -1;
+    }
+
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 1em;
+      text-align: center;
+    }
+
+    main {
+      position: relative;
+      flex: 1;
+      max-width: 2300px;
+      max-height: 100%;
+      /* 최대 높이 설정 */
+      margin: 20px;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.7);
+      /* 반투명한 흰색 배경 */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+      /* 세로 스크롤이 필요한 경우에만 나타나도록 설정 */
+    }
+
+    .post {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 20px;
+    }
+
+    .post h2 {
+      color: #333;
+      text-decoration: underline;
+    }
+
+    .post p {
+      color: #666;
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .post p {
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    nav {
+      width: 0;
+      height: 100vh;
+      overflow: hidden;
+      transition: width 0.3s;
+      background-color: #333;
+      color: #fff;
+      position: fixed;
+      top: 0;
+      right: 0;
+    }
+
+    pre {
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    nav a {
+      display: block;
+      padding: 1em;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .menu-toggle {
+      display: none;
+      cursor: pointer;
+      position: fixed;
+      top: 1em;
+      right: 1em;
+      z-index: 2;
+      background-color: #333;
+      color: #fff;
+      padding: 0.5em;
+      border: none;
+      outline: none;
+    }
+
+    #icon-container {
+      position: fixed;
+
+      bottom: 20px;
+
+      right: 20px;
+
+      display: flex;
+
+      flex-direction: row;
+      align-items: center;
+
+    }
+
+    .icon {
+      width: 60px;
+      height: 60px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <video id="video-background" autoplay loop muted>
+    <source src="../gif/snail_-_3012 (1080p).mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <div class="dark-overlay"></div>
+
+  <header>
+    <h1>김종선 간이블로그</h1>
+    <button class="menu-toggle" onclick="toggleNav()">☰</button>
+  </header>
+
+  <nav id="navbar">
+    <a href="../index.html">Home</a>
+    <a href="../about.html">About</a>
+    <a href="../Contact.html">Contact</a>
+  </nav>
+
+  <main>
+    <div class="post">
+      <h2>게임서버 클라이언트</h2>
+      <div class="tooltip">
+        <p class="tooltiptext">This is the content of the first blog post.</p>
+        <pre>
+          #include <winsock2.h>
+            #include <windows.h>
+            #include <iostream>
+            #include <process.h>
+            #include <stdlib.h>
+            #include <time.h>
+            #include <conio.h>
+            
+            #pragma comment (lib, "ws2_32.lib")
+            #pragma warning(disable:4996)
+            
+            using namespace std;
+            
+            
+            struct Packet {
+            
+                int a[10][10] = { 0, };
+            
+            };
+            #define  PORT 5500
+            #define BUFFERSIZE 100
+            #define NAMESIZE 30
+            HANDLE  mutex;
+            int clientNumber = 0;
+            unsigned  threadID;
+            int allClientSocket[100];
+            
+            //send(socket, (char*)&WideMap, sizeof(WideMap), 0);
+            //recv(socket, (char*)&WideMap, sizeof(WideMap), 0);
+            
+            
+            int GameMode = 1;                   //게임모드 설정
+            int a[5][5] = { 0, };               //rotate용 배열 1
+            int b[5][5] = { 0, };               //rotate용 배열 2
+            int c[5][5] = { 0, };               //rotate용 배열 3
+            int d[5][5] = { 0, };               //rotate용 배열 4
+            int WideMap[10][10] = { 0, };       //전체 맵
+            int dufWideMap[10][10] = { 0, };    //안전성용 복제맵( 플레이어 위치는 없음 )
+            int nosight[10][10] = { 0, };       //안보이는 비공개맵
+            int w1 = 0;                         // 벽갯수 1
+            int w2 = 0;                         // 벽갯수 2
+            int p1 = 0;                         // 플레이어 1의 row좌표
+            int p2 = 0;                         // 플레이어 1의 col좌표
+            int p3 = 5;                         // 플레이어 2의 row좌표
+            int p4 = 5;                         // 플레이어 2의 col좌표
+            int po1 = 0;                        // 플레이어 1의 사분면
+            int po2 = 0;                        // 플레이어 2의 사분면
+            int fo1 = 0;                        // 발검음 추적기 1
+            int fo2 = 0;                        // 발걸음 추적기 2
+            int foot1 = 0;                      // 발검음 추적기 합산 1
+            int foot2 = 0;                      // 발검음 추적기 합산 2
+            int state = 0;                      // 현재 상태(벽 만들기 전 후 만 나타냄)
+            int KH1 = 0;                        // 플레이어 1의 키 홀드 상태
+            int KH2 = 0;                        // 플레이어 2의 키 홀드 상태
+            int keypo1 = 0;                     // 키1의 사분면 
+            int keypo2 = 0;                     // 키2의 사분면
+            int mm = 0;                         // 다음 장면으로 넘어가기
+            int mm1 = 0;                        // 키가 먹힌것인지 아닌지 나타내기
+            int mm2 = 0;                        // 키가 먹힌것인지 아닌지 나타내기
+            int lk1 = 0;                        // 플레이어 1의 방향
+            int lk2 = 0;                        // 플레이어 2의 방향
+            int ton1 = 0;                       // 두번쨰 키가 먹히면 1
+            int ton2 = 0;                       // 두번째 키가 먹히면 1
+            int win1 = 0;                       // 플레이어 1승
+            int win2 = 0;                       // 플레이어 2승
+            int wend = 0;                       // 벽 다 생성 후
+            int o[10] = { 0, };                 // 아나운서용 배열
+            int oO = 0;                         // 재시작용
+            int so1 = 0;                        // 소켓저장용
+            int so2 = 0;                        // 소켓저장용
+            int serso = 0;                      // 서버소켓저장용
+            
+            
+            class THD {
+            public:
+                THD();
+                int Soc_Ser();
+                static unsigned __stdcall broadcastAllClient(void* arg);
+                static unsigned __stdcall broadcastAllClient1(void* arg);
+                int SelectGameMode();                                   //게임모드 결정
+                int PM(int& k, int& p1, int& p2,int& p3, int& p4);      //벽 생성중 플레이어 움직임
+                int locate(int& p1, int& p2, int& p3, int& p4);         //플레이어 위치 및 벽 추적
+                int dump();                                             //전체 맵에 안전성용 맵 덤프
+                int MW(int& k, int& p1, int& p2, int& p3, int& p4);     //벽 생성용 함수
+                int serverview();                                       //서버가 보는 시점
+                int rotate();                                           //벽 돌리기
+                int MK();                                               //첫번쨰 키 만들기
+                int MKroof();                                           //첫번째 키 발걸음에 따라 만들기
+                int random();                                           //벽 생성이 끝난 후 플레이어 위치 재설정
+                int PMDM(int& k, int& p1, int& p2, int& p3, int& p4, int& KH1, int& KH2); // 게임 시작 후 플레이어 움직임
+                int footstep();                                         //발걸음 세기
+                int dump2();                                            //게임 시작후 전체맵에 안전성맵 덤프
+                int map();                                              //맵 보여주기
+                int MK2();                                              //두번쨰 키 만들기
+                int MKroof2();                                          //두번째 키 재생성
+                int goal();                                             //Exit 생성
+                int shoot(int& k);                                      //상대 저격
+                int map2();
+                int wash();
+            };
+            THD::THD(){}
+            int THD::SelectGameMode() 						1901092김종선
+            {
+                int qq1;
+                qq1 = 0;
+                int iui = 0;
+              while (qq1 != 1)
+              {
+                system("cls");
+                cout << endl;
+                if (GameMode == 1)
+                {
+                  cout << "1.비공개 모드 <-" << endl;
+                  cout << "2.공개 모드";
+                  cout << endl << "3.종료";
+                }
+                else if (GameMode == 2)
+                {
+                  cout << "1.비공개 모드" << endl;
+                  cout << "2.공개 모드 <-";
+                  cout << endl << "3.종료";
+                }
+                else if (GameMode == 3)
+                {
+                  cout << "1.비공개 모드" << endl;
+                  cout << "2.공개 모드";
+                  cout << endl << "3.종료 <-";
+                }
+                    iui = _getch();
+                    if (iui == 72)
+                    {
+                        GameMode--;
+                        if (GameMode < 1)GameMode++;
+                    }
+                    else if (iui == 80)
+                    {
+                        GameMode++;
+                        if (GameMode > 3)GameMode--;
+                    }
+                    else if (iui == 32)qq1 = 1;
+              }
+                cout << "게임모드는 " << GameMode << "번 으로 결정되었습니다." << endl;
+                return 0;
+            }
+        </pre>
+      </div>
+    </div>
+    <div id="icon-container">
+      <!-- Example icons (replace with your own icons and links) -->
+      <img class="icon" src="../Icon/YT.png" alt="Icon 1" onclick="openLink('https://www.youtube.com/')">
+      <img class="icon" src="../Icon/GIT.png" alt="Icon 2"
+        onclick="openLink('https://github.com/nonecalculate/Anyproject.git')">
+      <img class="icon" src="../Icon/steam2.png" alt="Icon 3"
+        onclick="openLink('https://steamcommunity.com/id/whdtjs_92/')">
+    </div>
+  </main>
+
+  <script>
+    function toggleNav() {
+      const nav = document.getElementById('navbar');
+      nav.style.width = nav.style.width === '250px' ? '0' : '250px';
+    }
+    function openLink(url) {
+      window.open(url, '_blank');
+    }
+    const menuToggle = document.querySelector('.menu-toggle');
+    menuToggle.style.display = 'block'; // Display the toggle button once JavaScript is loaded
+  </script>
+</body>
+
+</html>
