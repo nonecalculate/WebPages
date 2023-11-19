@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Blog - Post Title</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #video-background {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      opacity: 0.5;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: -1;
+    }
+
+    .dark-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: -1;
+    }
+
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 1em;
+      text-align: center;
+    }
+
+    main {
+      position: relative;
+      flex: 1;
+      max-width: 800px;
+      margin: 20px;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.7);
+      /* 반투명한 흰색 배경 */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .post {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 20px;
+    }
+
+    .post h2 {
+      color: #333;
+      text-decoration: underline;
+    }
+
+    .post p {
+      color: #666;
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    nav {
+      width: 0;
+      height: 100vh;
+      overflow: hidden;
+      transition: width 0.3s;
+      background-color: #333;
+      color: #fff;
+      position: fixed;
+      top: 0;
+      right: 0;
+    }
+
+    nav a {
+      display: block;
+      padding: 1em;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .menu-toggle {
+      display: none;
+      cursor: pointer;
+      position: fixed;
+      top: 1em;
+      right: 1em;
+      z-index: 2;
+      background-color: #333;
+      color: #fff;
+      padding: 0.5em;
+      border: none;
+      outline: none;
+    }
+
+    #icon-container {
+      position: fixed;
+
+      bottom: 20px;
+
+      right: 20px;
+
+      display: flex;
+
+      flex-direction: row;
+      align-items: center;
+
+    }
+
+    .icon {
+      width: 60px;
+      height: 60px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <video id="video-background" autoplay loop muted>
+    <source src="gif\snail_-_3012 (1080p).mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <div class="dark-overlay"></div>
+
+  <header>
+    <h1>김종선 간이블로그</h1>
+    <button class="menu-toggle" onclick="toggleNav()">☰</button>
+  </header>
+
+  <nav id="navbar">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="Contact.html">Contact</a>
+  </nav>
+
+  <main>
+    <div class="post">
+      <h2>군산대 재학생 김종선의 개인 블로그겸 연습용 웹사이트입니다.</h2>
+      <div class="tooltip">
+        <p class="tooltiptext">This is the content of the first blog post.</p>
+        <p>개인적인 연구 및, 관심사항과 각종 코딩 연습까지. 여러개를 모아놓는 곳입니다. 개인적인 질문과 연락사항은 Contact탭의 이메일 주소나 전화를 참고해주세요.</p>
+      </div>
+    </div>
+    <div id="icon-container">
+      <!-- Example icons (replace with your own icons and links) -->
+      <img class="icon" src="Icon/YT.png" alt="Icon 1" onclick="openLink('https://www.youtube.com/')">
+      <img class="icon" src="Icon/GIT.png" alt="Icon 2"
+        onclick="openLink('https://github.com/nonecalculate/Anyproject.git')">
+      <img class="icon" src="Icon/steam2.png" alt="Icon 3"
+        onclick="openLink('https://steamcommunity.com/id/whdtjs_92/')">
+    </div>
+  </main>
+
+  <script>
+    function toggleNav() {
+      const nav = document.getElementById('navbar');
+      nav.style.width = nav.style.width === '250px' ? '0' : '250px';
+    }
+    function openLink(url) {
+      window.open(url, '_blank');
+    }
+    const menuToggle = document.querySelector('.menu-toggle');
+    menuToggle.style.display = 'block'; // Display the toggle button once JavaScript is loaded
+  </script>
+</body>
+
+</html>
